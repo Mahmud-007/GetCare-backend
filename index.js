@@ -23,11 +23,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // Routing
-app.use('/api',(res,req)=>{
-  res.json({
-    title : "title"
-  })
-});
+app.use('/api',loginRouter);
 
 // Error Handleing
 app.use(notFoundHandler);

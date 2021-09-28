@@ -1,5 +1,7 @@
-function loginController (res, req, next){
-    res.send("GetCare | Login");
+function loginController (req, res, next){
+    res.json({
+        title : "GetCare | Login"
+    });
 }
 
 module.exports = loginController;
