@@ -1,12 +1,40 @@
 const express = require('express');
-const mysqlConnection = require('./Database/Connection');
+const mysqlConnection = require('./Database/connection');
+const path = require("path");
+const cookieParser = require('cookie-parser');
+const dotenv = require("dotenv");
+
+//internal imports
+const  {errorHandler, notFoundHandler} = require("./middlewares/common/errorHandler");
+const loginRouter = require("./Routers/loginRouter");
+
 const app = express();
+dotenv.config();
  
-app.get('/', function (req, res) {
-  res.send('Hello World');
-})
 
 // Database Connection
-mysqlConnection;
+mysqlConnection
 
-app.listen(3000);
+// Request Parser
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
+// Cookie parser
+app.use(cookieParser(process.env.COOKIE_SECRET));
+
+// Routing
+app.use('/api',(res,req)=>{
+  res.json({
+    title : "title"
+  })
+});
+
+// Error Handleing
+app.use(notFoundHandler);
+app.use(errorHandler);
+
+
+// App Listening
+app.listen(process.env.PORT, ()=>{
+  console.log(`app listening to port ${process.env.PORT}`);
+});
