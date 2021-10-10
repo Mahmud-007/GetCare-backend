@@ -1,5 +1,5 @@
 const express = require('express');
-const mysqlConnection = require('./Database/connection');
+const databaseConnection = require('./models/index');
 const path = require("path");
 const cookieParser = require('cookie-parser');
 const dotenv = require("dotenv");
@@ -13,13 +13,13 @@ dotenv.config();
  
 
 // Database Connection
-mysqlConnection
+databaseConnection
 
 // Request Parser
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({extended : true}));
 
-// Cookie parser
+// Cookie Parser
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // Routing
@@ -29,8 +29,7 @@ app.use('/api',loginRouter);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-
 // App Listening
-app.listen(process.env.PORT, ()=>{
+app.listen(process.env.PORT, () => {
   console.log(`app listening to port ${process.env.PORT}`);
 });

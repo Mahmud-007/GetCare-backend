@@ -1,6 +1,6 @@
 function loginController (req, res, next){
     res.json({
-        title : "GetCare | Login"
+        title : `${process.env.APP_NAME} | Login`
     });
 }
 
