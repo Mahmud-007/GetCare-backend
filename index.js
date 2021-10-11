@@ -3,10 +3,11 @@ const databaseConnection = require('./models/index');
 const path = require("path");
 const cookieParser = require('cookie-parser');
 const dotenv = require("dotenv");
+const bodyParser = require('body-parser');
 
 //internal imports
 const  {errorHandler, notFoundHandler} = require("./middlewares/common/errorHandler");
-const loginRouter = require("./Routers/loginRouter");
+const loginRouter = require("./Routers/user");
 
 const app = express();
 dotenv.config();
@@ -17,10 +18,22 @@ databaseConnection
 
 // Request Parser
 app.use(express.json());
-app.use(express.urlencoded({extended : true}));
+app.use(express.urlencoded({extended : false}));
+
 
 // Cookie Parser
 app.use(cookieParser(process.env.COOKIE_SECRET));
+
+// config express middlewares
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+
 
 // Routing
 app.use('/api',loginRouter);
