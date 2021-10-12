@@ -1,15 +1,20 @@
 const jwt = require('jsonwebtoken');
 
 const authGuard =(req, res, next)=>{
-    const {authorization} = req.headers;
+    
+    const token = req.cookies.access_token;
+    console.log(`cookie: ${token}`);
+    console.log('in auth guard')
     try{
-        const token = authorization;
-        console.log("token ",req.headers);
+        // const token = tokenCookie.split('=')[1];
+        // //console.log(token);
         const decoded = jwt.verify(token,process.env.JWT_SECRET);
-        req.name = decoded.name;
-        req.id = decoded.id;
+        //console(decoded);
+        // req.name = decoded.name;
+        // req.id = decoded.id;
         next();
     }catch(err){
+        next(err);
         console.error(err);
     }
 }

@@ -4,9 +4,6 @@ const jwt = require("jsonwebtoken");
 
 module.exports = {
   async signup(req, res) {
-      console.log(req.body.name);
-      console.log(req.body.email);
-      console.log(req.body.password);
     return User.create({
       name: req.body.name,
       email: req.body.email,
@@ -34,12 +31,19 @@ module.exports = {
         },process.env.JWT_SECRET,{
             expiresIn: '100h'
         });
+        user.token = token
+        res.cookie(process.env.COOKIE_NAME, token,
+            {
+            maxAge:8400000,
+            sign: true
+            }
+                );
         res.status(200).json({
             "message": "Successfully Login",
             "access_token": token
         });
     }else{
-        res.status(400).message("Authentication Error");
+        res.status(400).send("Authentication Error");
     }
   },
 };
