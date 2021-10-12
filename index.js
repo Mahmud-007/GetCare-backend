@@ -6,8 +6,8 @@ const dotenv = require("dotenv");
 const bodyParser = require('body-parser');
 
 //internal imports
-const  {errorHandler, notFoundHandler} = require("./middlewares/common/errorHandler");
-const loginRouter = require("./Routers/user");
+const  {errorHandler, notFoundHandler} = require("./middlewares/errorHandler");
+const userAuthenticate = require("./Routers/user");
 
 const app = express();
 dotenv.config();
@@ -36,7 +36,7 @@ app.use(function (req, res, next) {
 
 
 // Routing
-app.use('/api',loginRouter);
+app.use('/api',userAuthenticate);
 
 // Error Handleing
 app.use(notFoundHandler);

@@ -1,5 +1,6 @@
 const User = require("../../models").User;
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 module.exports = {
   async signup(req, res) {
@@ -15,8 +16,30 @@ module.exports = {
       .catch((error) => res.status(400).send(error));
   },
   async login(req, res) {
-    return User.findAll()
-      .then((users) => res.status(200).send(users))
-      .catch((error) => res.status(400).send(error));
+    const myPlaintextPassword = req.body.password;
+    try{
+        var user = await User.findOne({
+            where: {
+                email: req.body.email,
+            }
+        });
+    }catch(error) {
+        console.error(error)
+    }
+    const result = await bcrypt.compare(myPlaintextPassword, user.password);
+    if (result) {
+        const token = jwt.sign({ 
+            name: user.name, 
+            id: user.id, 
+        },process.env.JWT_SECRET,{
+            expiresIn: '100h'
+        });
+        res.status(200).json({
+            "message": "Successfully Login",
+            "access_token": token
+        });
+    }else{
+        res.status(400).message("Authentication Error");
+    }
   },
 };
