@@ -1,13 +1,14 @@
-const User = require("../../models").User;
+const {User} = require("../../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 module.exports = {
   async signup(req, res) {
-    return User.create({
+      //res.send("body");
+    return await User.create({
       name: req.body.name,
       email: req.body.email,
-      password: await bcrypt.hash(req.body.password, 8),
+      password: await bcrypt.hash(req.body.password,10),
     })
       .then((user) => res.status(200).send(user))
       .catch((error) => res.status(400).send(error));

@@ -1,37 +1,48 @@
 const express = require('express');
-const databaseConnection = require('./models/index');
-const path = require("path");
+const {sequelize} = require('./models');
+
 const cookieParser = require('cookie-parser');
 const dotenv = require("dotenv");
-const bodyParser = require('body-parser');
+
 
 //internal imports
 const  {errorHandler, notFoundHandler} = require("./middlewares/errorHandler");
-const userAuthenticate = require("./Routers/user");
+const userRouter = require("./Routers/userRouter");
+const doctorRouter = require("./Routers/doctorRouter");
+const patientRouter = require("./Routers/patientRouter");
+
 
 const app = express();
 dotenv.config();
- 
-
-// Database Connection
-databaseConnection
 
 // Request Parser
 app.use(express.json());
 app.use(express.urlencoded({extended : false}));
 
-
 // Cookie Parser
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // Routing
-app.use('/api',userAuthenticate);
+app.use('/api', userRouter, 
+                doctorRouter,
+                patientRouter
+        );
 
 // Error Handleing
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-// App Listening
+// App Listening and database Connection
 app.listen(process.env.PORT, () => {
   console.log(`app listening to port ${process.env.PORT}`);
+  try {
+    (async()=>{
+      await sequelize.authenticate({force: true});
+      console.log('Database Connected.');
+    })().catch((error)=>{
+      console.log(error);
+    });
+  } catch (error) {
+   console.error('Unable to connect to the database:', error);
+  }
 });
