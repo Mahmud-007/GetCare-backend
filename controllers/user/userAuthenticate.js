@@ -33,6 +33,9 @@ module.exports = {
             expiresIn: '100h'
         });
         user.token = token
+        res.header.user_access_token = token;
+        // it't needed to test rest api
+        // in the forntend it is handled by headers authorization
         res.cookie(process.env.COOKIE_NAME, token,
             {
             maxAge:8400000,
@@ -47,4 +50,15 @@ module.exports = {
         res.status(400).send("Authentication Error");
     }
   },
+  logout(req,res){
+      try{
+        res.clearCookie('user');
+        res.json({
+            success:true,
+        })
+      }
+      catch(error){
+          console.log(error);
+      }
+  }
 };

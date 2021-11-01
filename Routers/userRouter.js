@@ -9,6 +9,7 @@ router.get('/users', authGuard, getUsers);
 router.get('/profile', authGuard, getProfile);
 router.post('/login', userAuthenticate.login);
 router.post('/signup', userAuthenticate.signup);
+router.get('/logout', userAuthenticate.logout);
 
   
 module.exports = router;
