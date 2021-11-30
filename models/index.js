@@ -1,49 +1,48 @@
-const {Sequelize, Datatypes} = require('sequelize');
-const dotenv = require('dotenv');
-const fs = require("fs");
-const path = require("path");
-const basename = path.basename(__filename);
+const dbConfig = require('../config/dbConfig');
+const {Sequelize,DataTypes} = require('sequelize');
 
-dotenv.config()
+const sequelize = new Sequelize(
+  dbConfig.DB,
+  dbConfig.USER,
+  dbConfig.PASSWORD,{
+    host: dbConfig.host,
+    dialect: dbConfig.dialect,
+    operatorsAliases: false,
 
-const sequelize = new Sequelize(process.env.DATABASE, process.env.DATABASE_USERNAME, process.env.DATABASE_PASSWORD, {
-    host: process.env.DATABASE_HOST,
-    dialect: 'mysql',
-  });
-
-try {
-    (async()=>{
-      await sequelize.authenticate();
-      console.log('Database Connection has been established successfully.');
-    })().catch((error)=>{
-      console.log(error);
-    });
-} catch (error) {
-   console.error('Unable to connect to the database:', error);
-}
-const db = {};
-
-fs.readdirSync(__dirname)
-  .filter((file) => {
-    return (
-      file.indexOf(".") !== 0 && file !== basename && file.slice(-3) === ".js"
-    );
-  })
-  .forEach((file) => {
-    const model = require(path.join(__dirname, file))(
-      sequelize,
-      Sequelize.DataTypes
-    );
-    db[model.name] = model;
-  });
-
-Object.keys(db).forEach((modelName) => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
+    pool: {
+      max: dbConfig.pool.max,
+      min: dbConfig.pool.min,
+      acquire: dbConfig.pool.acquire,
+      idle: dbConfig.pool.idle
+    }
   }
+  );
+
+  sequelize.authenticate()
+    .then(()=>{
+      console.log("Database Connected");
+    }).catch(error=>{
+      console.log(error);
+    })
+
+    const db = {}
+
+    db.sequelize = Sequelize;
+    db.sequelize = sequelize;
+
+    db.users = require('./user.js')(sequelize, DataTypes);
+    db.doctors = require('./doctor.js')(sequelize, DataTypes);
+
+    db.sequelize.sync({ force : false})
+    .then(()=>{
+      console.log("re-synced");
+    });
+
+
+//Relations
+db.users.hasOne(db.doctors, {
+  foreignKey: 'user_id'
 });
 
-db.Sequelize = Sequelize;
-db.sequelize = sequelize;
 
-module.exports = db;
+    module.exports = db
