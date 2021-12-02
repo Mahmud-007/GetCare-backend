@@ -53,6 +53,9 @@ app.use('/api', userRouter,
 app.use(notFoundHandler);
 app.use(errorHandler);
 
+// static Images
+app.use('/Images', express.static('./Images'));
+
 //second edition
 //middlewares
 let corsOptions = {

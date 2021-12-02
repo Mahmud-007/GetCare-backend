@@ -17,32 +17,55 @@ const sequelize = new Sequelize(
     }
   }
   );
+sequelize.authenticate()
+  .then(()=>{
+    console.log("Database Connected");
+  }).catch(error=>{
+    console.log(error);
+  })
 
-  sequelize.authenticate()
-    .then(()=>{
-      console.log("Database Connected");
-    }).catch(error=>{
-      console.log(error);
-    })
+const db = {}
 
-    const db = {}
+db.sequelize = Sequelize;
+db.sequelize = sequelize;
 
-    db.sequelize = Sequelize;
-    db.sequelize = sequelize;
+db.users = require('./user.js')(sequelize, DataTypes);
+db.doctors = require('./doctor.js')(sequelize, DataTypes);
+db.patients = require('./patient.js')(sequelize, DataTypes);
+db.medicalHistorys = require('./medicalHistory')(sequelize, DataTypes);
 
-    db.users = require('./user.js')(sequelize, DataTypes);
-    db.doctors = require('./doctor.js')(sequelize, DataTypes);
-
-    db.sequelize.sync({ force : false})
-    .then(()=>{
-      console.log("re-synced");
-    });
+db.sequelize.sync({ force : false})
+  .then(()=>{
+    console.log("re-synced");
+  });
 
 
 //Relations
+
+//users & doctors one to one
 db.users.hasOne(db.doctors, {
+  foreignKey: 'user_id',
+  as: 'Doctors'
+});
+db.doctors.belongsTo(db.users, {
+  foreignKey: 'user_id',
+  as: 'User'
+})
+
+//users & patients one to one
+db.users.hasOne(db.patients, {
   foreignKey: 'user_id'
 });
 
+//patients & medicalHistory one to many
+db.patients.hasMany(db.medicalHistorys, {
+  foreignKey: 'patient_id',
+  as: 'MedicalHistory'
+})
 
-    module.exports = db
+db.medicalHistorys.belongsTo(db.patients, {
+  foreignKey: 'patient_id',
+  as: 'Patient'
+})
+
+module.exports = db
