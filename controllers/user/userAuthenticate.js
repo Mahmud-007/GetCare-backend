@@ -2,6 +2,8 @@ const db = require('../../models');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = db.users;
+const Doctor = db.doctors;
+const Patient = db.patients;
 
 module.exports = {
   async signup(req, res) {
@@ -24,6 +26,14 @@ module.exports = {
                 email: req.body.email,
             }
         });
+
+
+        let patient = await Patient.findOne({
+            where: {
+                user_id: user.id,
+            }
+        });
+        req.patientId = patient.id;
     }catch(error) {
         console.error(error)
     }

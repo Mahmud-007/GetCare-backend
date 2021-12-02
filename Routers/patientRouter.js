@@ -8,7 +8,7 @@ const authGuard = require("../middlewares/authGuard");
 router.post('/patient/add-details',authGuard,patient.addDetails);
 router.post('/patient/medical-history',
             authGuard,
-            common.upload,
+            common.findPatientId,
             patient.medicalHistory
             );
   

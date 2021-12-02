@@ -1,6 +1,7 @@
 const db = require('../../models');
 
 const Patient = db.patients;
+const MedicalHistory = db.medicalHistorys;
 
 module.exports = {
   //add patient details
@@ -15,14 +16,16 @@ module.exports = {
   
   //add medical history of a patient
   async medicalHistory(req, res) {
-    console.log(req.userId);
-    console.log("addDetails")
-    return await PatientHistory.create({
-      images:req.fils.path,
-      ...req.body,
-      user_id: req.userId
+    console.log(req.body);
+    return await MedicalHistory.create({
+      //images:req.file.path,
+      //...req.body,
+      images: req.body.image,
+      date: req.body.time,
+      description: req.body.shortDescription,
+      patient_id: req.patientId 
     })
-      .then((PatientHistory) => res.status(200).send(PatientHistory))
+      .then((MedicalHistory) => res.status(200).json(MedicalHistory))
       .catch((error) => res.status(400).send(error));
   },
 };

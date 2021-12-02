@@ -7,7 +7,7 @@ function notFoundHandler(res, req, next){
 function errorHandler (error, req, res, next){
     res.json({
         message : error.message,
-        title : "GetCare | Error Page"
+        title : " GetCare | Error Page"
     });
     console.log(error.message);
 }
