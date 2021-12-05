@@ -33,8 +33,9 @@ db.users = require('./user.js')(sequelize, DataTypes);
 db.doctors = require('./doctor.js')(sequelize, DataTypes);
 db.patients = require('./patient.js')(sequelize, DataTypes);
 db.medicalHistorys = require('./medicalHistory')(sequelize, DataTypes);
+db.appointments = require('./appointment')(sequelize, DataTypes);
 
-db.sequelize.sync({ force : false})
+db.sequelize.sync({ force : false })
   .then(()=>{
     console.log("re-synced");
   });
@@ -50,7 +51,7 @@ db.users.hasOne(db.doctors, {
 db.doctors.belongsTo(db.users, {
   foreignKey: 'user_id',
   as: 'User'
-})
+});
 
 //users & patients one to one
 db.users.hasOne(db.patients, {
@@ -61,11 +62,23 @@ db.users.hasOne(db.patients, {
 db.patients.hasMany(db.medicalHistorys, {
   foreignKey: 'patient_id',
   as: 'MedicalHistory'
-})
+});
 
 db.medicalHistorys.belongsTo(db.patients, {
   foreignKey: 'patient_id',
   as: 'Patient'
-})
+});
+
+
+//appointments for
+db.doctors.hasOne(db.appointments, {
+  foreignKey: 'doctor_id',
+  as: 'Docotor'
+});
+
+db.patients.hasOne(db.appointments, {
+  foreignKey: 'paitent_id',
+  as: 'Patient'
+});
 
 module.exports = db

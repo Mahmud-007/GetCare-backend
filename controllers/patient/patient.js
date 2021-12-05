@@ -28,4 +28,18 @@ module.exports = {
       .then((MedicalHistory) => res.status(200).json(MedicalHistory))
       .catch((error) => res.status(400).send(error));
   },
+
+  async getPatientMedicalHistory(req,res){
+    try{
+      return MedicalHistory.findAll({
+        where: {
+          patient_id : req.patientId
+      }
+      })
+        .then((medicalHistories) => res.status(200).send(medicalHistories))
+        .catch((error) => res.status(400).send(error));
+    }catch(err){
+        console.error(err);
+  }
+  }
 };
